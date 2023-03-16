@@ -95,7 +95,6 @@ variable "repositories" {
 
 variable "environments" {
   type = map(object({
-    organization_scope = optional(bool, false)
     name               = optional(string)
     variables = map(object({
       value     = string
@@ -108,7 +107,6 @@ variable "environments" {
 
     Key   : Name of the variable set
     Value : 
-      organization_scope : Wether to shared with all repositories in organization
       variables          : A map op variables in the set
         Key   : The variable key
         Value :
