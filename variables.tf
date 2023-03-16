@@ -19,9 +19,9 @@ variable "organization" {
     description     : An organization description
     public_email    : Organization e-mail (will be public)
     location        : The organization location or country
-    website         : The companyu website
+    website         : The company website
     enable_scanning : Enable GitHub managed code security scanning
-    members         : A list of GitHub usernames to join organization as memebers
+    members         : A list of GitHub usernames to join organization as members
   EOL
 }
 
@@ -95,7 +95,7 @@ variable "repositories" {
 
 variable "environments" {
   type = map(object({
-    name               = optional(string)
+    name = optional(string)
     variables = map(object({
       value     = string
       sensitive = optional(bool, false)
