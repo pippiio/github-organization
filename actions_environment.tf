@@ -1,7 +1,7 @@
 locals {
   repo_env = { for entry in flatten([
     for name, repository in var.repositories : [
-      for environment in repository.environments : [
+      for environment in keys(repository.environments) : [
         for key, variable in var.environments[environment].variables : {
           key         = key
           value       = variable.value
@@ -13,13 +13,19 @@ locals {
 
 resource "github_repository_environment" "this" {
   for_each = { for entry in flatten([for name, repository in var.repositories : [
-    for environment in repository.environments : {
+    for environment in keys(repository.environments) : {
       repository  = name
       environment = try(var.environments[environment].name, environment)
   }]]) : "${entry.repository}/${entry.environment}" => entry }
 
   environment = each.value.environment
   repository  = github_repository.this[each.value.repository].name
+
+  # Must create a deployment branch policy aswell for this to work. However this is not supported in github provider v5.18.3
+  deployment_branch_policy { 
+    custom_branch_policies = true
+    protected_branches     = false
+  }
 }
 
 resource "github_actions_environment_secret" "this" {

@@ -63,7 +63,7 @@ variable "repositories" {
     required_status_checks     = optional(set(string), [])
     team_permission            = map(bool)
     collaborator_permission    = optional(map(bool), {})
-    environments               = optional(set(string), [])
+    environments               = optional(map(set(string)), {})
   }))
   description = <<-EOL
     A map of GitHub repositories in the organization.
@@ -89,13 +89,15 @@ variable "repositories" {
       collaborator_permission    : A map of GitHub collaborators to grant access
         Key   : The collaborator's GitHub username
         Value : Set to true to grant write access and false to grant read-only access
-      environments               : A set of references to shared secrets to add to configure for the repo
+      environments               : A map of references to environments
+        Key   : Name of the environment
+        Value : A set of branch name patterns with protected access
   EOL
 }
 
 variable "environments" {
   type = map(object({
-    name               = optional(string)
+    name = optional(string)
     variables = map(object({
       value     = string
       sensitive = optional(bool, false)
@@ -103,14 +105,14 @@ variable "environments" {
   }))
   default     = {}
   description = <<-EOL
-    A map of organization variable sets:
+    A map of Actions environments:
 
-    Key   : Name of the variable set
-    Value : 
-      variables          : A map op variables in the set
+    Key   : Name of the environment
+    Value :
+      variables : A map op variables in the set
         Key   : The variable key
         Value :
           value     : The variable value
-          sensitive : Wether the variable should be marked as sensitive
+          sensitive : Wether the variable should be declared as a secret
   EOL
 }
