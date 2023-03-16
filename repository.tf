@@ -14,10 +14,17 @@ resource "github_repository" "this" {
   delete_branch_on_merge = each.value.delete_branch_on_merge
   auto_init              = true
   archive_on_destroy     = false
+  topics                 = each.value.topics
+  vulnerability_alerts   = var.organization.enable_scanning
 
-  # topics - (Optional) The list of topics of the repository.
-  # template - (Optional) Use a template repository to create this resource. See Template Repositories below for details.
-  # vulnerability_alerts = var.config.enable_scanning
+  dynamic "template" {
+    for_each = each.value.template != null ? [1] : []
+    content {
+      owner                = var.organization.name
+      repository           = each.value.template
+      include_all_branches = true
+    }
+  }
 }
 
 resource "github_branch_protection" "main" {
