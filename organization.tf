@@ -15,9 +15,9 @@ resource "github_organization_settings" "this" {
   members_can_create_public_repositories                   = false
   members_can_create_private_repositories                  = false
   members_can_create_internal_repositories                 = false
-  members_can_create_pages                                 = false
-  members_can_create_public_pages                          = false
-  members_can_create_private_pages                         = false
+  members_can_create_pages                                 = var.organization.enable_pages
+  members_can_create_public_pages                          = var.organization.enable_pages
+  members_can_create_private_pages                         = var.organization.enable_pages
   members_can_fork_private_repositories                    = false
   dependabot_alerts_enabled_for_new_repositories           = var.organization.enable_scanning
   dependabot_security_updates_enabled_for_new_repositories = var.organization.enable_scanning
