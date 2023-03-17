@@ -8,6 +8,7 @@ variable "organization" {
     location        = string
     website         = string
     enable_scanning = optional(bool, false)
+    enable_pages    = optional(bool, false)
     members         = map(string)
   })
   description = <<-EOL
@@ -21,6 +22,7 @@ variable "organization" {
     location        : The organization location or country
     website         : The company website
     enable_scanning : Enable GitHub managed code security scanning
+    enable_pages    : Wether to enable GitHub pages on organization level
     members         : A list of GitHub usernames to join organization as members
   EOL
 }

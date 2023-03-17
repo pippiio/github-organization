@@ -61,10 +61,10 @@ resource "github_branch_protection" "all" {
   require_signed_commits = true
 }
 
-resource "github_repository_tag_protection" "all" {
+resource "github_repository_tag_protection" "version" {
   for_each = var.repositories
 
-  repository = each.key
+  repository = github_repository.this[each.key].each.key
   pattern    = "v*"
 }
 
