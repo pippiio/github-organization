@@ -65,7 +65,7 @@ resource "github_branch_protection" "all" {
 resource "github_repository_tag_protection" "version" {
   for_each = var.repositories
 
-  repository = github_repository.this[each.key].name
+  repository = github_repository.this[each.key].full_name
   pattern    = "v*"
 }
 
