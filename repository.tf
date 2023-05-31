@@ -42,7 +42,7 @@ resource "github_branch_protection" "main" {
     required_approving_review_count = each.value.required_approvals
     require_code_owner_reviews      = each.value.require_code_owner_reviews
     dismiss_stale_reviews           = true
-    require_last_push_approval      = true
+    require_last_push_approval      = each.value.required_approvals > 0
   }
 
   required_status_checks {
