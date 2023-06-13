@@ -9,7 +9,7 @@ resource "github_organization_settings" "this" {
 
   has_organization_projects                                = true
   has_repository_projects                                  = true
-  default_repository_permission                            = "read"
+  default_repository_permission                            = "none"
   web_commit_signoff_required                              = true
   members_can_create_repositories                          = false
   members_can_create_public_repositories                   = false
