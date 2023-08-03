@@ -8,6 +8,7 @@ resource "github_repository" "this" {
   has_issues             = each.value.enable_issues
   has_projects           = each.value.enable_projects
   has_wiki               = each.value.enable_wiki
+  has_discussions        = each.value.enable_discussions
   allow_merge_commit     = each.value.allow_merge_commit
   allow_squash_merge     = each.value.allow_squash_merge
   allow_rebase_merge     = each.value.allow_rebase_merge

@@ -56,6 +56,7 @@ variable "repositories" {
     enable_projects            = optional(bool, false)
     enable_wiki                = optional(bool, false)
     enable_issues              = optional(bool, false)
+    enable_discussions         = optional(bool, false)
     allow_merge_commit         = optional(bool, false)
     allow_squash_merge         = optional(bool, true)
     allow_rebase_merge         = optional(bool, false)
@@ -81,6 +82,7 @@ variable "repositories" {
       enable_projects            : Set to true to enable the GitHub Projects features on the repository
       enable_wiki                : Set to true to enable the GitHub Wiki features on the repository
       enable_issues              : Set to true to enable the GitHub Issues features on the repository
+      enable_discussions         : Set to true to enable the GitHub Discussions features on the repository
       allow_merge_commit         : Set to true to enable merge commits on the repository
       allow_squash_merge         : Set to false to disable squash merges on the repository
       allow_rebase_merge         : Set to true to enable rebase merges on the repository
