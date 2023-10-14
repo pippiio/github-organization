@@ -63,6 +63,7 @@ variable "repositories" {
     delete_branch_on_merge     = optional(bool, true)
     required_approvals         = optional(number, 1)
     require_code_owner_reviews = optional(bool, false)
+    allow_bypass_protection    = optional(bool, false)
     required_status_checks     = optional(set(string), [])
     team_permission            = map(bool)
     collaborator_permission    = optional(map(bool), {})
@@ -89,6 +90,7 @@ variable "repositories" {
       delete_branch_on_merge     : Set to false to disable automatically deletion of head branch after a pull request is merged
       required_approvals         : Required number of approvals to satisfy main branch protection requirements
       require_code_owner_reviews : Require an approved review in pull requests including files with a designated code owner
+      allow_bypass_protection    : Allow admins bypass branch protections
       required_status_checks     : The list of status checks to require in order to merge into main branch
       team_permission            : A map of GitHub organization teams to grant access
         Key   : The name of GitHub them team
