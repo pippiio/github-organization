@@ -81,7 +81,7 @@ resource "github_team_repository" "this" {
 
   repository = github_repository.this[each.value.repo].name
   team_id    = github_team.this[each.value.team].id
-  permission = each.value.permission ? "push" : "pull"
+  permission = each.value.permission == "read_write" ? "push" : "pull"
 }
 
 resource "github_repository_collaborator" "this" {
