@@ -65,7 +65,7 @@ variable "repositories" {
     require_code_owner_reviews = optional(bool, false)
     allow_bypass_protection    = optional(bool, false)
     required_status_checks     = optional(set(string), [])
-    team_permission            = map(bool)
+    team_permission            = map(string)
     collaborator_permission    = optional(map(bool), {})
     environments               = optional(set(string), [])
     template                   = optional(string)
@@ -94,7 +94,7 @@ variable "repositories" {
       required_status_checks     : The list of status checks to require in order to merge into main branch
       team_permission            : A map of GitHub organization teams to grant access
         Key   : The name of GitHub them team
-        Value : Set to true to grant write access and false to grant read-only access
+        Value : Set to 'read_write' to grant write access and 'read' to grant read-only access
       collaborator_permission    : A map of GitHub collaborators to grant access
         Key   : The collaborator's GitHub username
         Value : Set to true to grant write access and false to grant read-only access
