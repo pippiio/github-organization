@@ -1,24 +1,23 @@
 resource "github_repository" "this" {
   for_each = var.repositories
 
-  name                        = each.key
-  description                 = each.value.description
-  visibility                  = each.value.visibility
-  homepage_url                = each.value.homepage
-  has_issues                  = each.value.enable_issues
-  has_projects                = each.value.enable_projects
-  has_wiki                    = each.value.enable_wiki
-  has_discussions             = each.value.enable_discussions
-  allow_merge_commit          = each.value.allow_merge_commit
-  allow_squash_merge          = each.value.allow_squash_merge
-  allow_rebase_merge          = each.value.allow_rebase_merge
-  delete_branch_on_merge      = each.value.delete_branch_on_merge
-  auto_init                   = true
-  archive_on_destroy          = false
-  topics                      = each.value.topics
-  vulnerability_alerts        = var.organization.enable_scanning
-  is_template                 = each.value.is_template
-  web_commit_signoff_required = true
+  name                   = each.key
+  description            = each.value.description
+  visibility             = each.value.visibility
+  homepage_url           = each.value.homepage
+  has_issues             = each.value.enable_issues
+  has_projects           = each.value.enable_projects
+  has_wiki               = each.value.enable_wiki
+  has_discussions        = each.value.enable_discussions
+  allow_merge_commit     = each.value.allow_merge_commit
+  allow_squash_merge     = each.value.allow_squash_merge
+  allow_rebase_merge     = each.value.allow_rebase_merge
+  delete_branch_on_merge = each.value.delete_branch_on_merge
+  auto_init              = true
+  archive_on_destroy     = false
+  topics                 = each.value.topics
+  vulnerability_alerts   = var.organization.enable_scanning
+  is_template            = each.value.is_template
 
   dynamic "template" {
     for_each = each.value.template != null ? [1] : []
