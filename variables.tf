@@ -67,10 +67,14 @@ variable "repositories" {
     required_status_checks     = optional(set(string), [])
     team_permission            = map(string)
     collaborator_permission    = optional(map(bool), {})
-    environments               = optional(set(string), [])
     template                   = optional(string)
     is_template                = optional(bool, false)
     topics                     = optional(list(string), [])
+    environments = optional(map(map(object({
+      description = string
+      value       = string
+      sensitive   = bool
+    }))), {})
   }))
   description = <<-EOL
     A map of GitHub repositories in the organization.
@@ -98,31 +102,16 @@ variable "repositories" {
       collaborator_permission    : A map of GitHub collaborators to grant access
         Key   : The collaborator's GitHub username
         Value : Set to true to grant write access and false to grant read-only access
-      environments               : A set of references to shared secrets to add to configure for the repo
       template                   : The name of the template repository. This must be loctaed within the same organization.
       is_template                : Wether the repository is enabled as template repository.
       topics                     : The list of topics of the repository.
-  EOL
-}
-
-variable "environments" {
-  type = map(object({
-    name = optional(string)
-    variables = map(object({
-      value     = string
-      sensitive = optional(bool, false)
-    }))
-  }))
-  default     = {}
-  description = <<-EOL
-    A map of organization variable sets:
-
-    Key   : Name of the variable set
-    Value : 
-      variables          : A map op variables in the set
-        Key   : The variable key
-        Value :
-          value     : The variable value
-          sensitive : Wether the variable should be marked as sensitive
+      environments               : A map of actions environments
+        Key   : The name of the actions environment   
+        Value : A map of env vars and secrets within the action environment
+          Key   : The name of the env var or secret
+          Value :
+            description : A description of the env var
+            value       : The value of the env var or secret
+            sensitive   : Wether the value if sensitive and should be treated as a secret
   EOL
 }
