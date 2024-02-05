@@ -35,7 +35,7 @@ resource "github_branch_protection" "main" {
 
   repository_id                   = github_repository.this[each.key].node_id
   pattern                         = "main"
-  enforce_admins                  = true
+  enforce_admins                  = !each.value.allow_bypass_protection
   allows_deletions                = false
   require_signed_commits          = true
   require_conversation_resolution = true

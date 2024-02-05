@@ -39,7 +39,7 @@ resource "github_actions_environment_secret" "this" {
 }
 
 resource "github_actions_environment_variable" "this" {
-  for_each = { for key, envvar in local.repository_environment : key => envvar if envvar.sensitive == false}
+  for_each = { for key, envvar in local.repository_environment : key => envvar if envvar.sensitive == false }
 
   depends_on = [
     github_repository_environment.this
