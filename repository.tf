@@ -18,6 +18,7 @@ resource "github_repository" "this" {
   topics                      = each.value.topics
   vulnerability_alerts        = var.organization.enable_scanning
   is_template                 = each.value.is_template
+  web_commit_signoff_required = true
 
   dynamic "template" {
     for_each = each.value.template != null ? [1] : []
