@@ -64,13 +64,6 @@ resource "github_branch_protection" "all" {
   require_signed_commits = true
 }
 
-resource "github_repository_tag_protection" "all" {
-  for_each = var.repositories
-
-  repository = each.key
-  pattern    = "v*"
-}
-
 resource "github_team_repository" "this" {
   for_each = { for entry in flatten([for repo_key, repo in var.repositories : [
     for team, permission in repo.team_permission : {
