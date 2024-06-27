@@ -32,6 +32,7 @@ variable "teams" {
     description        = string
     code_review_count  = optional(number, 1)
     code_review_notify = optional(bool, true)
+    bypass_version_tag = optional(bool, false)
     members            = map(string)
   }))
   description = <<-EOL
@@ -42,6 +43,7 @@ variable "teams" {
       description        : Team description
       code_review_count  : The number of team members to assign to a pull request
       code_review_notify : Whether to notify the entire team when at least one member is also assigned to the pull request
+      bypass_version_tag : Whether to allow the team to bypass version tag protection (allow creation of version tags)
       members            : A map of members to join the team
         Key   : member's GitHub username
         Value : member role in team
