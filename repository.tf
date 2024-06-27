@@ -64,6 +64,47 @@ resource "github_branch_protection" "all" {
   require_signed_commits = true
 }
 
+resource "github_repository_ruleset" "example" {
+  for_each = var.repositories
+
+  name        = "version-tag"
+  repository  = github_repository.this[each.key].name
+  target      = "tag"
+  enforcement = "active"
+
+  conditions {
+    ref_name {
+      include = ["~ALL"]
+      exclude = []
+    }
+  }
+
+  dynamic "bypass_actors" {
+    for_each = { for key, team in var.teams : key => team if team.bypass_version_tag }
+
+    content {
+      actor_id    = github_team.this[bypass_actors.key].id
+      actor_type  = "Team"
+      bypass_mode = "always"
+    }
+  }
+
+  rules {
+    creation                = true
+    update                  = true
+    deletion                = true
+    required_linear_history = true
+    required_signatures     = true
+
+    tag_name_pattern {
+      name     = "Version Tagging"
+      negate   = false
+      operator = "regex"
+      pattern  = "v*"
+    }
+  }
+}
+
 resource "github_team_repository" "this" {
   for_each = { for entry in flatten([for repo_key, repo in var.repositories : [
     for team, permission in repo.team_permission : {
