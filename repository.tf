@@ -90,7 +90,7 @@ resource "github_repository_ruleset" "all" {
 resource "github_repository_ruleset" "tag_all" {
   for_each = var.repositories
 
-  name        = format("%s-%s", each.key, "main")
+  name        = format("%s-%s", each.key, "tag_all")
   repository  = github_repository.this[each.key].name
   target      = "tag"
   enforcement = "active"
