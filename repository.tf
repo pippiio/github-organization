@@ -30,17 +30,17 @@ resource "github_repository" "this" {
   }
 }
 
-resource "github_repository_ruleset" "main" {
+resource "github_repository_ruleset" "default" {
   for_each = var.repositories
 
-  name        = format("%s-%s", each.key, "main")
+  name        = format("%s-%s", each.key, github_repository.this[each.key].default_branch)
   repository  = github_repository.this[each.key].name
   target      = "branch"
   enforcement = "active"
 
   conditions {
     ref_name {
-      include = ["main"]
+      include = ["~DEFAULT_BRANCH"]
       exclude = []
     }
   }
@@ -50,15 +50,13 @@ resource "github_repository_ruleset" "main" {
     update              = true
     deletion            = false
     required_signatures = true
+
     pull_request {
       required_approving_review_count   = each.value.required_approvals
       require_code_owner_review         = each.value.require_code_owner_reviews
       dismiss_stale_reviews_on_push     = true
       require_last_push_approval        = each.value.required_approvals > 0
-      required_review_thread_resolution = true // ->  require_conversation_resolution = true
-    }
-    required_deployments {
-      required_deployment_environments = ["dev"]
+      required_review_thread_resolution = true
     }
   }
 }
@@ -87,10 +85,10 @@ resource "github_repository_ruleset" "all" {
   }
 }
 
-resource "github_repository_ruleset" "tag_all" {
+resource "github_repository_ruleset" "tags" {
   for_each = var.repositories
 
-  name        = format("%s-%s", each.key, "tag_all")
+  name        = format("%s-%s", each.key, "tags")
   repository  = github_repository.this[each.key].name
   target      = "tag"
   enforcement = "active"
@@ -105,7 +103,7 @@ resource "github_repository_ruleset" "tag_all" {
   rules {
     tag_name_pattern {
       operator = "starts_with"
-      pattern  = "v" //Alternative the operator can be regex and the pattern can be '^v(\d+(?:\.\d+){2,}.*)$'
+      pattern  = "^v?\\d+(?:\\.\\d+){2,}[a-z]*$"
       name     = "SemVer Tagging"
     }
   }
