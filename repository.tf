@@ -30,45 +30,83 @@ resource "github_repository" "this" {
   }
 }
 
-resource "github_branch_protection" "main" {
+resource "github_repository_ruleset" "default" {
   for_each = var.repositories
 
-  repository_id                   = github_repository.this[each.key].node_id
-  pattern                         = "main"
-  enforce_admins                  = !each.value.allow_bypass_protection
-  allows_deletions                = false
-  require_signed_commits          = true
-  require_conversation_resolution = true
+  name        = format("%s-%s", each.key, github_repository.this[each.key].default_branch)
+  repository  = github_repository.this[each.key].name
+  target      = "branch"
+  enforcement = "active"
 
-  required_pull_request_reviews {
-    required_approving_review_count = each.value.required_approvals
-    require_code_owner_reviews      = each.value.require_code_owner_reviews
-    dismiss_stale_reviews           = true
-    require_last_push_approval      = each.value.required_approvals > 0
+  conditions {
+    ref_name {
+      include = ["~DEFAULT_BRANCH"]
+      exclude = []
+    }
   }
 
-  required_status_checks {
-    strict   = true
-    contexts = each.value.required_status_checks
+  rules {
+    creation            = true
+    update              = true
+    deletion            = false
+    required_signatures = true
+
+    pull_request {
+      required_approving_review_count   = each.value.required_approvals
+      require_code_owner_review         = each.value.require_code_owner_reviews
+      dismiss_stale_reviews_on_push     = true
+      require_last_push_approval        = each.value.required_approvals > 0
+      required_review_thread_resolution = true
+    }
   }
 }
 
-resource "github_branch_protection" "all" {
+resource "github_repository_ruleset" "all" {
   for_each = var.repositories
 
-  repository_id          = github_repository.this[each.key].node_id
-  pattern                = "*"
-  enforce_admins         = !each.value.allow_bypass_protection
-  allows_deletions       = true
-  allows_force_pushes    = true
-  require_signed_commits = true
+  name        = format("%s-%s", each.key, "all")
+  repository  = github_repository.this[each.key].name
+  target      = "branch"
+  enforcement = "active"
+
+  conditions {
+    ref_name {
+      include = ["~ALL"]
+      exclude = []
+    }
+  }
+
+  rules {
+    creation            = true
+    update              = true
+    deletion            = true
+    required_signatures = true
+    non_fast_forward    = true
+  }
 }
 
-resource "github_repository_tag_protection" "all" {
+resource "github_repository_ruleset" "tags" {
   for_each = var.repositories
 
-  repository = each.key
-  pattern    = "v*"
+  name        = format("%s-%s", each.key, "tags")
+  repository  = github_repository.this[each.key].name
+  target      = "tag"
+  enforcement = "active"
+
+  conditions {
+    ref_name {
+      include = ["~ALL"]
+      exclude = []
+    }
+  }
+
+  rules {
+    tag_name_pattern {
+      operator = "starts_with"
+      pattern  = "^v?\\d+(?:\\.\\d+){2,}[a-z]*$"
+      name     = "SemVer Tagging"
+    }
+  }
 }
 
 resource "github_team_repository" "this" {
