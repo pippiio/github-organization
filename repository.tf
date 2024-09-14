@@ -46,9 +46,9 @@ resource "github_repository_ruleset" "default" {
   }
 
   rules {
-    creation            = true
+    creation            = true # restrict creation on default branch
     update              = true
-    deletion            = false
+    deletion            = true
     required_signatures = true
 
     pull_request {
@@ -77,11 +77,11 @@ resource "github_repository_ruleset" "all" {
   }
 
   rules {
-    creation            = true
-    update              = true
-    deletion            = true
+    creation            = false # do not restrict creation 
+    update              = false
+    deletion            = false
     required_signatures = true
-    non_fast_forward    = true
+    non_fast_forward    = false
   }
 }
 
