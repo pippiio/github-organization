@@ -46,10 +46,10 @@ resource "github_repository_ruleset" "default" {
   }
 
   rules {
-    creation            = true # restrict creation on default branch
-    update              = true
-    deletion            = true
-    required_signatures = true
+    creation            = true  # restrict creation of default branch
+    update              = false # allows PR merges on default branch
+    deletion            = true  # restrict deletion of default branch
+    required_signatures = true  # require signatures on default branch
 
     pull_request {
       required_approving_review_count   = each.value.required_approvals
