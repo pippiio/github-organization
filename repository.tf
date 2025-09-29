@@ -82,6 +82,10 @@ resource "github_repository_ruleset" "all" {
     deletion            = false
     required_signatures = true
     non_fast_forward    = false
+
+    bypass_pull_request_allowances {
+      users = ["github-actions[bot]"]
+    }
   }
 }
 
