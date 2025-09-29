@@ -57,6 +57,9 @@ resource "github_repository_ruleset" "default" {
       dismiss_stale_reviews_on_push     = true
       require_last_push_approval        = each.value.required_approvals > 0
       required_review_thread_resolution = true
+      bypass_pull_request_allowances {
+        users = ["github-actions[bot]"]
+      }
     }
   }
 }
@@ -82,7 +85,6 @@ resource "github_repository_ruleset" "all" {
     deletion            = false
     required_signatures = true
     non_fast_forward    = false
-
     bypass_pull_request_allowances {
       users = ["github-actions[bot]"]
     }
