@@ -46,7 +46,7 @@ resource "github_repository_ruleset" "default" {
   }
 
   bypass_actors {
-    actor_id    = 15368
+    actor_id    = 15368 # Github Actions bot app ID was found here: https://api.github.com/apps/github-actions
     actor_type  = "Integration"
     bypass_mode = "pull_request"
   }
@@ -83,7 +83,7 @@ resource "github_repository_ruleset" "all" {
   }
 
   bypass_actors {
-    actor_id    = 15368
+    actor_id    = 15368 # Github Actions bot app ID was found here: https://api.github.com/apps/github-actions
     actor_type  = "Integration"
     bypass_mode = "pull_request"
   }
