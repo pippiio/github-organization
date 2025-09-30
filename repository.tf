@@ -45,6 +45,12 @@ resource "github_repository_ruleset" "default" {
     }
   }
 
+  bypass_actors {
+    actor_id    = 15368
+    actor_type  = "Integration"
+    bypass_mode = "pull_request"
+  }
+
   rules {
     creation            = true  # restrict creation of default branch
     update              = false # allows PR merges on default branch
@@ -57,9 +63,6 @@ resource "github_repository_ruleset" "default" {
       dismiss_stale_reviews_on_push     = true
       require_last_push_approval        = each.value.required_approvals > 0
       required_review_thread_resolution = true
-      bypass_pull_request_allowances {
-        users = ["github-actions[bot]"]
-      }
     }
   }
 }
@@ -79,15 +82,18 @@ resource "github_repository_ruleset" "all" {
     }
   }
 
+  bypass_actors {
+    actor_id    = 15368
+    actor_type  = "Integration"
+    bypass_mode = "pull_request"
+  }
+
   rules {
     creation            = false # do not restrict creation 
     update              = false
     deletion            = false
     required_signatures = true
     non_fast_forward    = false
-    bypass_pull_request_allowances {
-      users = ["github-actions[bot]"]
-    }
   }
 }
 
