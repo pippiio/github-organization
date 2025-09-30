@@ -64,6 +64,7 @@ variable "repositories" {
     required_approvals         = optional(number, 1)
     require_code_owner_reviews = optional(bool, false)
     allow_bypass_protection    = optional(bool, false)
+    allow_actions_bypass       = optional(bool, false)
     required_status_checks     = optional(set(string), [])
     team_permission            = map(string)
     collaborator_permission    = optional(map(bool), {})
@@ -95,6 +96,7 @@ variable "repositories" {
       required_approvals         : Required number of approvals to satisfy main branch protection requirements
       require_code_owner_reviews : Require an approved review in pull requests including files with a designated code owner
       allow_bypass_protection    : Allow admins bypass branch protections
+      allow_actions_bypass       : Allow an actor_type to bypass commit signing, see https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_ruleset#actor_type-1
       required_status_checks     : The list of status checks to require in order to merge into main branch
       team_permission            : A map of GitHub organization teams to grant access
         Key   : The name of GitHub them team
