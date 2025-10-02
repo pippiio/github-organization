@@ -45,12 +45,6 @@ resource "github_repository_ruleset" "default" {
     }
   }
 
-  bypass_actors {
-    actor_id    = 15368 # Github Actions bot app ID was found here: https://api.github.com/apps/github-actions
-    actor_type  = "Integration"
-    bypass_mode = "pull_request"
-  }
-
   rules {
     creation            = true  # restrict creation of default branch
     update              = false # allows PR merges on default branch
@@ -82,18 +76,31 @@ resource "github_repository_ruleset" "all" {
     }
   }
 
-  bypass_actors {
-    actor_id    = 15368 # Github Actions bot app ID was found here: https://api.github.com/apps/github-actions
-    actor_type  = "Integration"
-    bypass_mode = "pull_request"
-  }
-
   rules {
     creation            = false # do not restrict creation 
     update              = false
     deletion            = false
-    required_signatures = true
     non_fast_forward    = false
+  }
+}
+
+resource "github_repository_ruleset" "required_signatures" {
+  for_each = var.repositories
+
+  name        = format("%s-%s", each.key, "required-signatures")
+  repository  = github_repository.this[each.key].name
+  target      = "branch"
+  enforcement = "active"
+
+  conditions {
+    ref_name {
+      include = ["~ALL"]
+      exclude = each.value.exclude_rules.required_signatures.branches
+    }
+  }
+
+  rules {
+    required_signatures = true
   }
 }
 
