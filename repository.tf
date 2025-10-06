@@ -80,6 +80,7 @@ resource "github_repository_ruleset" "all" {
     creation            = false # do not restrict creation 
     update              = false
     deletion            = false
+    required_signatures = true
     non_fast_forward    = false
   }
 }
