@@ -84,26 +84,6 @@ resource "github_repository_ruleset" "all" {
   }
 }
 
-resource "github_repository_ruleset" "required_signatures" {
-  for_each = var.repositories
-
-  name        = format("%s-%s", each.key, "required-signatures")
-  repository  = github_repository.this[each.key].name
-  target      = "branch"
-  enforcement = "active"
-
-  conditions {
-    ref_name {
-      include = ["~ALL"]
-      exclude = each.value.exclude_rules.required_signatures.branches
-    }
-  }
-
-  rules {
-    required_signatures = true
-  }
-}
-
 resource "github_repository_ruleset" "tags" {
   for_each = var.repositories
 
