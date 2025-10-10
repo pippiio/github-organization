@@ -72,7 +72,7 @@ resource "github_repository_ruleset" "all" {
   conditions {
     ref_name {
       include = ["~ALL"]
-      exclude = []
+      exclude = each.value.exclude_all_rules
     }
   }
 
