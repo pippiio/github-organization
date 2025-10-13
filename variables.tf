@@ -75,6 +75,9 @@ variable "repositories" {
       value       = string
       sensitive   = bool
     }))), {})
+    exclude_all_rules          = optional(object({
+      branches = optional(list(string), [])
+    }), {})
   }))
   description = <<-EOL
     A map of GitHub repositories in the organization.
