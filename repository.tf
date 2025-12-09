@@ -21,91 +21,18 @@ resource "github_repository" "this" {
   web_commit_signoff_required = true
 
   dynamic "template" {
-    for_each = each.value.template != null ? [1] : []
+    for_each = each.value.template_repository != null ? [1] : []
     content {
       owner                = var.organization.name
-      repository           = each.value.template
+      repository           = each.value.template_repository
       include_all_branches = true
     }
   }
-}
 
-resource "github_repository_ruleset" "default" {
-  for_each = var.repositories
-
-  name        = format("%s-%s", each.key, github_repository.this[each.key].default_branch)
-  repository  = github_repository.this[each.key].name
-  target      = "branch"
-  enforcement = "active"
-
-  conditions {
-    ref_name {
-      include = ["~DEFAULT_BRANCH"]
-      exclude = []
-    }
-  }
-
-  rules {
-    creation            = true  # restrict creation of default branch
-    update              = false # allows PR merges on default branch
-    deletion            = true  # restrict deletion of default branch
-    required_signatures = true  # require signatures on default branch
-
-    pull_request {
-      required_approving_review_count   = each.value.required_approvals
-      require_code_owner_review         = each.value.require_code_owner_reviews
-      dismiss_stale_reviews_on_push     = true
-      require_last_push_approval        = each.value.required_approvals > 0
-      required_review_thread_resolution = true
-    }
-  }
-}
-
-resource "github_repository_ruleset" "all" {
-  for_each = var.repositories
-
-  name        = format("%s-%s", each.key, "all")
-  repository  = github_repository.this[each.key].name
-  target      = "branch"
-  enforcement = "active"
-
-  conditions {
-    ref_name {
-      include = ["~ALL"]
-      exclude = each.value.exclude_all_rules.branches
-    }
-  }
-
-  rules {
-    creation            = false # do not restrict creation 
-    update              = false
-    deletion            = false
-    required_signatures = true
-    non_fast_forward    = false
-  }
-}
-
-resource "github_repository_ruleset" "tags" {
-  for_each = var.repositories
-
-  name        = format("%s-%s", each.key, "tags")
-  repository  = github_repository.this[each.key].name
-  target      = "tag"
-  enforcement = "active"
-
-  conditions {
-    ref_name {
-      include = ["~ALL"]
-      exclude = []
-    }
-  }
-
-  rules {
-    tag_name_pattern {
-      operator = "starts_with"
-      pattern  = "^v?\\d+(?:\\.\\d+){2,}[a-z]*$"
-      name     = "SemVer Tagging"
-    }
+  lifecycle {
+    ignore_changes = [
+      template,
+    ]
   }
 }
 
