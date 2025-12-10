@@ -50,33 +50,41 @@ variable "teams" {
 
 variable "repositories" {
   type = map(object({
-    description                = string
-    visibility                 = optional(string, "private")
-    homepage                   = optional(string)
-    enable_projects            = optional(bool, false)
-    enable_wiki                = optional(bool, false)
-    enable_issues              = optional(bool, false)
-    enable_discussions         = optional(bool, false)
-    allow_merge_commit         = optional(bool, false)
-    allow_squash_merge         = optional(bool, true)
-    allow_rebase_merge         = optional(bool, false)
-    delete_branch_on_merge     = optional(bool, true)
-    required_approvals         = optional(number, 1)
-    require_code_owner_reviews = optional(bool, false)
-    allow_bypass_protection    = optional(bool, false)
-    required_status_checks     = optional(set(string), [])
-    team_permission            = map(string)
-    collaborator_permission    = optional(map(bool), {})
-    template                   = optional(string)
-    is_template                = optional(bool, false)
-    topics                     = optional(list(string), [])
+    description             = string
+    visibility              = optional(string, "private")
+    homepage                = optional(string)
+    enable_projects         = optional(bool, false)
+    enable_wiki             = optional(bool, false)
+    enable_issues           = optional(bool, false)
+    enable_discussions      = optional(bool, false)
+    allow_merge_commit      = optional(bool, false)
+    allow_squash_merge      = optional(bool, true)
+    allow_rebase_merge      = optional(bool, false)
+    delete_branch_on_merge  = optional(bool, true)
+    team_permission         = map(string)
+    collaborator_permission = optional(map(bool), {})
+    template_repository     = optional(string)
+    is_template             = optional(bool, false)
+    topics                  = optional(list(string), [])
     environments = optional(map(map(object({
       description = string
       value       = string
       sensitive   = bool
     }))), {})
-    exclude_all_rules          = optional(object({
-      branches = optional(list(string), [])
+    rules = optional(object({
+      default_branch = optional(object({
+        required_approvals        = optional(number, 1)
+        require_code_owner_review = optional(bool, false)
+        required_status_checks    = optional(set(string), [])
+        rule_bypass_actors        = optional(map(string), {})
+      }), {})
+      sign_all_branches            = optional(bool, true)
+      conventional_branch_names    = optional(bool, true)
+      allowed_branch_name_patterns = optional(set(string), [])
+      imutable_tags                = optional(bool, true)
+      sem_ver_tags                 = optional(bool, true)
+      allowed_tag_patterns         = optional(set(string), [])
+      create_tag_actors            = optional(map(string), {})
     }), {})
   }))
   description = <<-EOL
@@ -95,17 +103,13 @@ variable "repositories" {
       allow_squash_merge         : Set to false to disable squash merges on the repository
       allow_rebase_merge         : Set to true to enable rebase merges on the repository
       delete_branch_on_merge     : Set to false to disable automatically deletion of head branch after a pull request is merged
-      required_approvals         : Required number of approvals to satisfy main branch protection requirements
-      require_code_owner_reviews : Require an approved review in pull requests including files with a designated code owner
-      allow_bypass_protection    : Allow admins bypass branch protections
-      required_status_checks     : The list of status checks to require in order to merge into main branch
       team_permission            : A map of GitHub organization teams to grant access
         Key   : The name of GitHub them team
         Value : Set to 'read_write' to grant write access and 'read' to grant read-only access
       collaborator_permission    : A map of GitHub collaborators to grant access
         Key   : The collaborator's GitHub username
         Value : Set to true to grant write access and false to grant read-only access
-      template                   : The name of the template repository. This must be loctaed within the same organization.
+      template_repository        : The name of the template repository. This must be loctaed within the same organization.
       is_template                : Wether the repository is enabled as template repository.
       topics                     : The list of topics of the repository.
       environments               : A map of actions environments
@@ -116,5 +120,18 @@ variable "repositories" {
             description : A description of the env var
             value       : The value of the env var or secret
             sensitive   : Wether the value if sensitive and should be treated as a secret
+      rules                          : Configuration of repository rulesets
+        default_branch : Ruleset protecting default branch
+          required_approvals        : Required number of approvals to satisfy default branch protection requirements
+          require_code_owner_review : Require an approved review in pull requests including files with a designated code owner
+          required_status_checks    : The list of status checks to require in order to merge into main branch
+          rule_bypass_actors.       : A map of actors that may bypass default branch rulesets on pull requests. Key is actor id, Value actor type.
+        sign_all_branches            : Set to true to require signed commits on all branches
+        conventional_branch_names    : Set to true to allow conventional commits branch naming
+        allowed_branch_name_patterns : A set of string patterns defining allowed branch naming
+        imutable_tags                : Set to true to deny changing tags
+        sem_ver_tags                 : Set to true to allow semantic version tags
+        allowed_tag_patterns         : A set of string patterns defining allowed tag naming
+        create_tag_actors            : A map of actors that may create tags. Key is actor id, Value actor type.
   EOL
 }
