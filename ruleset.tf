@@ -6,15 +6,25 @@ locals {
   default_branch = "~DEFAULT_BRANCH"
   conventional_branch_patterns = [
     "refs/heads/feat/*",
+    "refs/heads/feat/*/*",
     "refs/heads/fix/*",
+    "refs/heads/fix/*/*",
     "refs/heads/build/*",
+    "refs/heads/build/*/*",
     "refs/heads/chore/*",
+    "refs/heads/chore/*/*",
     "refs/heads/ci/*",
+    "refs/heads/ci/*/*",
     "refs/heads/docs/*",
+    "refs/heads/docs/*/*",
     "refs/heads/style/*",
+    "refs/heads/style/*/*",
     "refs/heads/refactor/*",
+    "refs/heads/refactor/*/*",
     "refs/heads/perf/*",
+    "refs/heads/perf/*/*",
     "refs/heads/test/*",
+    "refs/heads/test/*/*",
   ]
   sem_ver_tag_patterns = [
     "refs/tags/v[0-9]*.[0-9]*.[0-9]*",
@@ -40,7 +50,6 @@ resource "github_repository_ruleset" "protect_default_branch" {
 
   rules {
     creation         = local.disallowed # Restrict creations
-    update           = local.disallowed
     deletion         = local.disallowed # Restrict deletions
     non_fast_forward = true             # Block force pushes
 
