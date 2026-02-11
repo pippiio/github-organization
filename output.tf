@@ -21,3 +21,19 @@ output "repositories" {
     collaborators = { for collaborator in values(github_repository_collaborator.this) : collaborator.username => collaborator.permission if collaborator.repository == repo.name }
   } }
 }
+
+output "github_actions_organization_registration_token" {
+  description = "A GitHub Actions runner registration token for the organization."
+  value       = data.github_actions_organization_registration_token.this.token
+  sensitive   = true
+}
+
+output "github_actions_organization_registration_token_expiration" {
+  description = "The expiration date of the GitHub Actions organization registration token."
+  value       = data.github_actions_organization_registration_token.this.expires_at
+}
+
+output "github_actions_runner_group" {
+  description = "A map of GitHub Actions runner groups in the organization."
+  value       = { for group in github_actions_runner_group.this : group.name => group.id }
+}
