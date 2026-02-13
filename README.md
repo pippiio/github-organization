@@ -49,7 +49,7 @@ module "github" {
 
 | Name | Version |
 |------|---------|
-| github | 6.11.1 |
+| github | ~>6.9 |
 
 ## Inputs
 
@@ -90,11 +90,9 @@ module "github" {
 
 | Name | Description |
 |------|-------------|
-| github\_actions\_organization\_registration\_token | A GitHub Actions runner registration token for the organization. |
-| github\_actions\_organization\_registration\_token\_expiration | The expiration date of the GitHub Actions organization registration token. |
-| github\_actions\_runner\_group | A map of GitHub Actions runner groups in the organization. |
 | members | A map of GitHub organization members. |
 | repositories | A map of organization repositories |
+| runner\_groups | Runner group object with token, expiration and group ids. |
 | teams | A map of GitHub organization teams including memberpriviledges. |
 
 <!-- END_TF_DOCS -->
