@@ -135,3 +135,19 @@ variable "repositories" {
         create_tag_actors            : A map of actors that may create tags. Key is actor id, Value actor type.
   EOL
 }
+
+variable "hosted_runner_groups" {
+  type = map(object({
+    repositories           = optional(set(string), [])
+    allow_all_repositories = bool
+  }))
+  default     = {}
+  description = <<-EOL
+    A map of GitHub hosted runner groups to be added to the organization:
+
+    Key   : Name of runner group
+    Value :
+      description  : Runner group description
+      repositories : An optional set of repository names to limit the runner group access. If not provided, the runner group will have access to all repositories in the organization.
+  EOL
+}
