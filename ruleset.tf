@@ -212,3 +212,61 @@ resource "github_repository_ruleset" "tag_actors" {
     }
   }
 }
+
+resource "github_repository_ruleset" "protect_dot_github" {
+  for_each = var.repositories
+
+  name        = "Protect .github folder"
+  repository  = github_repository.this[each.key].name
+  target      = "push"
+  enforcement = "active"
+
+  rules {
+    file_path_restriction {
+      restricted_file_paths = [".github/**"]
+    }
+  }
+
+  dynamic "bypass_actors" {
+    for_each = each.value.rules.dot_github_actors
+
+    content {
+      actor_id    = bypass_actors.key
+      actor_type  = bypass_actors.value
+      bypass_mode = "always"
+    }
+  }
+}
+
+resource "github_repository_ruleset" "sensitive_files" {
+  for_each = var.repositories
+
+  name        = "Block sensitive files"
+  repository  = github_repository.this[each.key].name
+  target      = "push"
+  enforcement = "active"
+
+  rules {
+    file_path_restriction {
+      restricted_file_paths = [
+        "**/*.pem",
+        "**/*.key",
+        "**/*.pfx",
+        "**/*.p12",
+        "**/*.jks",
+        "**/*.keystore",
+        "**/*.csr",
+        "**/*.der",
+        "**/id_rsa*",
+        "**/id_ed25519*",
+        "**/*.ppk",
+        "**/ssh_config",
+        "**/known_hosts",
+        "**/.env",
+        "**/*.tfstate",
+        "**/*.tfstate.*",
+        "**/.terraform/**",
+      ]
+    }
+  }
+}
