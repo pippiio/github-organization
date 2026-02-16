@@ -115,7 +115,7 @@ resource "github_repository_ruleset" "protect_default_branch" {
 }
 
 resource "github_repository_ruleset" "sign_all_branches" {
-  for_each = { for _name, _repo in var.repositories : _name => _repo if _repo.rules.sign_all_branches }
+  for_each = var.repositories
 
   name        = "Signed commits on all branches"
   repository  = github_repository.this[each.key].name
