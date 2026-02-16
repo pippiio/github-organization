@@ -1,6 +1,5 @@
 resource "github_team" "this" {
   for_each = var.teams
-  provider = github
 
   name        = each.key
   description = each.value.description

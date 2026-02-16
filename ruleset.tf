@@ -31,6 +31,11 @@ locals {
     "refs/tags/v[0-9]*.[0-9]*",
     "refs/tags/v[0-9]*",
   ]
+  repository_roles = {
+    maintain        = 2,
+    write           = 4,
+    repositoryadmin = 5,
+  }
 }
 
 resource "github_repository_ruleset" "protect_default_branch" {
@@ -79,12 +84,32 @@ resource "github_repository_ruleset" "protect_default_branch" {
   }
 
   dynamic "bypass_actors" {
-    for_each = each.value.rules.default_branch.rule_bypass_actors
+    for_each = each.value.rules.default_branch.rule_bypass_apps
 
     content {
       actor_id    = bypass_actors.key
-      actor_type  = bypass_actors.value
-      bypass_mode = "pull_request"
+      actor_type  = "Integration"
+      bypass_mode = "always"
+    }
+  }
+
+  dynamic "bypass_actors" {
+    for_each = each.value.rules.default_branch.rule_bypass_teams
+
+    content {
+      actor_id    = github_team.this[bypass_actors.key].id
+      actor_type  = "Team"
+      bypass_mode = "always"
+    }
+  }
+
+  dynamic "bypass_actors" {
+    for_each = each.value.rules.default_branch.rule_bypass_roles
+
+    content {
+      actor_id    = local.repository_roles[lower(bypass_actors.key)]
+      actor_type  = "RepositoryRole"
+      bypass_mode = "always"
     }
   }
 }
@@ -110,6 +135,16 @@ resource "github_repository_ruleset" "sign_all_branches" {
     deletion            = local.allowed
     required_signatures = true
     non_fast_forward    = false
+  }
+
+  dynamic "bypass_actors" {
+    for_each = each.value.rules.sign_bypass_apps
+
+    content {
+      actor_id    = bypass_actors.key
+      actor_type  = "Integration"
+      bypass_mode = "always"
+    }
   }
 }
 
@@ -202,13 +237,34 @@ resource "github_repository_ruleset" "tag_actors" {
     creation = local.disallowed
   }
 
+
   dynamic "bypass_actors" {
-    for_each = each.value.rules.create_tag_actors
+    for_each = each.value.rules.create_tag_apps
 
     content {
       actor_id    = bypass_actors.key
-      actor_type  = bypass_actors.value
-      bypass_mode = "pull_request"
+      actor_type  = "Integration"
+      bypass_mode = "always"
+    }
+  }
+
+  dynamic "bypass_actors" {
+    for_each = each.value.rules.create_tag_teams
+
+    content {
+      actor_id    = github_team.this[bypass_actors.key].id
+      actor_type  = "Team"
+      bypass_mode = "always"
+    }
+  }
+
+  dynamic "bypass_actors" {
+    for_each = each.value.rules.create_tag_roles
+
+    content {
+      actor_id    = local.repository_roles[lower(bypass_actors.key)]
+      actor_type  = "RepositoryRole"
+      bypass_mode = "always"
     }
   }
 }
@@ -228,11 +284,31 @@ resource "github_repository_ruleset" "protect_dot_github" {
   }
 
   dynamic "bypass_actors" {
-    for_each = each.value.rules.dot_github_actors
+    for_each = each.value.rules.dot_github_bypass_apps
 
     content {
       actor_id    = bypass_actors.key
-      actor_type  = bypass_actors.value
+      actor_type  = "Integration"
+      bypass_mode = "always"
+    }
+  }
+
+  dynamic "bypass_actors" {
+    for_each = each.value.rules.dot_github_bypass_teams
+
+    content {
+      actor_id    = github_team.this[bypass_actors.key].id
+      actor_type  = "Team"
+      bypass_mode = "always"
+    }
+  }
+
+  dynamic "bypass_actors" {
+    for_each = each.value.rules.dot_github_bypass_roles
+
+    content {
+      actor_id    = local.repository_roles[lower(bypass_actors.key)]
+      actor_type  = "RepositoryRole"
       bypass_mode = "always"
     }
   }

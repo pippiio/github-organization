@@ -76,16 +76,22 @@ variable "repositories" {
         required_approvals        = optional(number, 1)
         require_code_owner_review = optional(bool, false)
         required_status_checks    = optional(set(string), [])
-        rule_bypass_actors        = optional(map(string), {})
+        rule_bypass_apps          = optional(set(string), [])
+        rule_bypass_teams         = optional(set(string), [])
+        rule_bypass_roles         = optional(set(string), [])
       }), {})
-      sign_all_branches            = optional(bool, true)
+      sign_bypass_apps             = optional(set(string), [])
       conventional_branch_names    = optional(bool, true)
       allowed_branch_name_patterns = optional(set(string), [])
       imutable_tags                = optional(bool, true)
       sem_ver_tags                 = optional(bool, true)
       allowed_tag_patterns         = optional(set(string), [])
-      create_tag_actors            = optional(map(string), {})
-      dot_github_actors            = optional(map(string), {})
+      create_tag_apps              = optional(map(string), {})
+      create_tag_teams             = optional(map(string), {})
+      create_tag_roles             = optional(map(string), {})
+      dot_github_bypass_apps       = optional(map(string), {})
+      dot_github_bypass_teams      = optional(map(string), {})
+      dot_github_bypass_roles      = optional(map(string), {})
     }), {})
   }))
   description = <<-EOL
@@ -126,15 +132,21 @@ variable "repositories" {
           required_approvals        : Required number of approvals to satisfy default branch protection requirements
           require_code_owner_review : Require an approved review in pull requests including files with a designated code owner
           required_status_checks    : The list of status checks to require in order to merge into main branch
-          rule_bypass_actors.       : A map of actors that may bypass default branch rulesets on pull requests. Key is actor id, Value actor type.
-        sign_all_branches            : Set to true to require signed commits on all branches
+          rule_bypass_apps          : A set of GitHub app ids that may always bypass default branch rulesets.
+          rule_bypass_teams         : A set of team names that may bypass default branch rulesets on pull requests.
+          rule_bypass_roles         : A set of roles that may bypass default branch rulesets on pull requests.
+        sign_bypass_apps             : A set of GitHub app ids that may push unsigned commits
         conventional_branch_names    : Set to true to allow conventional commits branch naming
         allowed_branch_name_patterns : A set of string patterns defining allowed branch naming
         imutable_tags                : Set to true to deny changing tags
         sem_ver_tags                 : Set to true to allow semantic version tags
         allowed_tag_patterns         : A set of string patterns defining allowed tag naming
-        create_tag_actors            : A map of actors that may create tags. Key is actor id, Value actor type.
-        dot_github_actors            : A map of actors that may push to .github folder.
+        create_tag_apps              : A set of app ids that may create tags.
+        create_tag_teams             : A set of team names that may create tags.
+        create_tag_roles             : A set of roles that may create tags.
+        dot_github_bypass_apps       : A set of app ids that may push to .github folder.
+        dot_github_bypass_teams      : A set of team names that may push to .github folder.
+        dot_github_bypass_roles      : A set of roles that may push to .github folder.
   EOL
 }
 
