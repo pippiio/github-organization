@@ -25,11 +25,12 @@ output "repositories" {
 output "runner_groups" {
   description = "Runner group object with token, expiration and group ids."
   value = {
-    token = sensitive(data.github_actions_organization_registration_token.this.token)
+    token = data.github_actions_organization_registration_token.this.token
     expiration = formatdate(
       "YYYY-MM-DD'T'hh:mm:ssZ",
       timeadd("1970-01-01T00:00:00Z", "${data.github_actions_organization_registration_token.this.expires_at}s")
     )
     groups = { for group in github_actions_runner_group.this : group.name => group.id }
   }
+  sensitive = true
 }
