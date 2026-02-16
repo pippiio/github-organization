@@ -214,7 +214,7 @@ resource "github_repository_ruleset" "tag_actors" {
 }
 
 resource "github_repository_ruleset" "protect_dot_github" {
-  for_each = var.repositories
+  for_each = { for _name, _repo in var.repositories : _name => _repo if _repo.visibility != "public" }
 
   name        = "Protect .github folder"
   repository  = github_repository.this[each.key].name
@@ -239,7 +239,7 @@ resource "github_repository_ruleset" "protect_dot_github" {
 }
 
 resource "github_repository_ruleset" "sensitive_files" {
-  for_each = var.repositories
+  for_each = { for _name, _repo in var.repositories : _name => _repo if _repo.visibility != "public" }
 
   name        = "Block sensitive files"
   repository  = github_repository.this[each.key].name
