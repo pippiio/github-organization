@@ -218,7 +218,7 @@ resource "github_repository_ruleset" "enforce_tag_naming" {
 resource "github_repository_ruleset" "tag_actors" {
   for_each = {
     for _name, _repo in var.repositories : _name => _repo
-    if length(setunion(_repo.rules.create_tag_apps, _repo.rules.create_tag_teams, _repo.rules.create_tag_roles)) > 0
+    if _repo.rules.create_tag_teams != null || _repo.rules.create_tag_roles != null
   }
 
   name        = "Create tag actors"
