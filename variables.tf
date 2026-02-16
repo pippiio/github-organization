@@ -79,7 +79,7 @@ variable "repositories" {
         rule_bypass_teams         = optional(set(string), [])
         rule_bypass_roles         = optional(set(string), [])
       }), {})
-      bypass_apps             = optional(set(string), [])
+      bypass_apps                  = optional(set(string), [])
       conventional_branch_names    = optional(bool, true)
       allowed_branch_name_patterns = optional(set(string), [])
       imutable_tags                = optional(bool, true)
