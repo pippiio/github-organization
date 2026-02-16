@@ -84,7 +84,7 @@ resource "github_repository_ruleset" "protect_default_branch" {
   }
 
   dynamic "bypass_actors" {
-    for_each = each.value.rules.default_branch.rule_bypass_apps
+    for_each = each.value.rules.bypass_apps
 
     content {
       actor_id    = bypass_actors.key
@@ -138,7 +138,7 @@ resource "github_repository_ruleset" "sign_all_branches" {
   }
 
   dynamic "bypass_actors" {
-    for_each = each.value.rules.sign_bypass_apps
+    for_each = each.value.rules.bypass_apps
 
     content {
       actor_id    = bypass_actors.key
@@ -216,7 +216,10 @@ resource "github_repository_ruleset" "enforce_tag_naming" {
 }
 
 resource "github_repository_ruleset" "tag_actors" {
-  for_each = { for _name, _repo in var.repositories : _name => _repo if length(_repo.rules.create_tag_actors) > 0 }
+  for_each = {
+    for _name, _repo in var.repositories : _name => _repo
+    if length(setunion(_repo.rules.create_tag_apps, _repo.rules.create_tag_teams, _repo.rules.create_tag_roles)) > 0
+  }
 
   name        = "Create tag actors"
   repository  = github_repository.this[each.key].name
@@ -237,9 +240,8 @@ resource "github_repository_ruleset" "tag_actors" {
     creation = local.disallowed
   }
 
-
   dynamic "bypass_actors" {
-    for_each = each.value.rules.create_tag_apps
+    for_each = each.value.rules.bypass_apps
 
     content {
       actor_id    = bypass_actors.key
@@ -284,7 +286,7 @@ resource "github_repository_ruleset" "protect_dot_github" {
   }
 
   dynamic "bypass_actors" {
-    for_each = each.value.rules.dot_github_bypass_apps
+    for_each = each.value.rules.bypass_apps
 
     content {
       actor_id    = bypass_actors.key
