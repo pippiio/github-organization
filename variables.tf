@@ -85,6 +85,7 @@ variable "repositories" {
       sem_ver_tags                 = optional(bool, true)
       allowed_tag_patterns         = optional(set(string), [])
       create_tag_actors            = optional(map(string), {})
+      dot_github_actors            = optional(map(string), {})
     }), {})
   }))
   description = <<-EOL
@@ -133,6 +134,7 @@ variable "repositories" {
         sem_ver_tags                 : Set to true to allow semantic version tags
         allowed_tag_patterns         : A set of string patterns defining allowed tag naming
         create_tag_actors            : A map of actors that may create tags. Key is actor id, Value actor type.
+        dot_github_actors            : A map of actors that may push to .github folder.
   EOL
 }
 
