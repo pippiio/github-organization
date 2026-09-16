@@ -25,8 +25,8 @@ module "github" {
       description     = "Terraform module for managing a GitHub organization"
       team_permission = { pippiio = "read_write" }
       rules = {
-        # Repository admins are always included for default-branch, tag-creation, and .github bypass.
-        # Admins respect rule_bypass_mode on the default branch; role lists cannot remove them.
+        # Repository admins have no automatic bypass.
+        # Include "repositoryadmin" in a bypass role list to grant it explicitly.
         create_tag_teams        = ["pippiio"]
         dot_github_bypass_teams = ["pippiio"]
         default_branch = {

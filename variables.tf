@@ -131,8 +131,8 @@ variable "repositories" {
           require_code_owner_review : Require an approved review in pull requests including files with a designated code owner
           required_status_checks    : The list of status checks to require in order to merge into main branch
           rule_bypass_teams         : A set of team names that may bypass the default branch ruleset.
-          rule_bypass_roles         : Additional roles that may bypass the default branch ruleset using rule_bypass_mode. Repository admins are always included and also respect rule_bypass_mode, regardless of this list.
-          rule_bypass_mode          : Bypass mode for apps, teams, and roles (including repository admins) on the default branch. Set to "pull_request" to require a pull request when bypassing, or "always" (the default) to also allow direct pushes. Other rulesets are unaffected.
+          rule_bypass_roles         : Roles that may bypass the default branch ruleset using rule_bypass_mode. Defaults to []; include "repositoryadmin" to grant repository admins bypass.
+          rule_bypass_mode          : Bypass mode for configured apps, teams, and roles on the default branch. Set to "pull_request" to require a pull request when bypassing, or "always" (the default) to also allow direct pushes. Other rulesets are unaffected.
         bypass_apps                  : A set of GitHub app ids that may bypass rulesets
         conventional_branch_names    : Set to true to allow conventional commits branch naming
         allowed_branch_name_patterns : A set of string patterns defining allowed branch naming
@@ -140,9 +140,9 @@ variable "repositories" {
         sem_ver_tags                 : Set to true to allow semantic version tags
         allowed_tag_patterns         : A set of string patterns defining allowed tag naming
         create_tag_teams             : A set of team names that may create tags.
-        create_tag_roles             : Additional roles that may create tags. Repository admins always have bypass for tag creation, regardless of this list.
+        create_tag_roles             : Roles that may create tags. Defaults to []; include "repositoryadmin" to grant repository admins tag creation bypass.
         dot_github_bypass_teams      : A set of team names that may push to .github folder.
-        dot_github_bypass_roles      : Additional roles that may push to .github folder. Repository admins always have bypass for this protection, regardless of this list.
+        dot_github_bypass_roles      : Roles that may push to .github folder. Defaults to []; include "repositoryadmin" to grant repository admins bypass for this protection.
   EOL
   validation {
     condition = alltrue([
