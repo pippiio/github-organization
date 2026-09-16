@@ -1,8 +1,8 @@
 <!-- BEGIN_TF_DOCS -->
 # github\_organization
-The _github-organization_ is a generic [Terraform](https://www.terraform.io/) module within the [pippi.io](https://pippi.io) family, maintained by [Tech Chapter](https://techchapter.com/). The pippi.io modules are build to support common use cases often seen at Tech Chapters clients. They are created with best practices in mind and battle tested at scale. All modules are free and open-source under the Apache License 2.0.
+The _github-organization_ is a generic [Terraform](https://www.terraform.io/) module within the [pippi.io](https://pippi.io) family, maintained by [pippiio](https://github.com/pippiio). The pippi.io modules are built to support common use cases for pippiio users. They are created with best practices in mind and battle tested at scale. All modules are free and open-source under the Apache License 2.0.
 
-The github-organization module is made to provision and manage a [GitHub](https://www.github.com/) organization in common scenarious often seen at Tech Chapters clients. This includes, creating repositories, secrets, and more.
+The github-organization module is made to provision and manage a [GitHub](https://www.github.com/) organization for common pippiio use cases. This includes, creating repositories, secrets, and more.
 
 # Examples
 
@@ -12,7 +12,7 @@ module "github" {
 
   organization = {
     billing_email = "hello@pippi.io"
-    public_email  = "pippi@techchapter.com"
+    public_email  = "hello@pippi.io"
     name          = "pippiio"
     display_name  = "Pippi io"
     description   = "Battle tested Terraform modules"
@@ -23,8 +23,8 @@ module "github" {
   }
 
   teams = {
-    techchapter = {
-      description = "Maintainers of pippiio organization from TechChapter"
+    pippiio = {
+      description = "Maintainers of the pippiio organization"
       members     = {}
     }
   }
@@ -32,14 +32,14 @@ module "github" {
   repositories = {
     "github_organization" = {
       description     = "Terraform module for managing a GitHub organization"
-      team_permission = { techchapter = "read_write" }
+      team_permission = { pippiio = "read_write" }
       rules = {
         # Repository admins are always included for default-branch, tag-creation, and .github bypass.
         # Admins respect rule_bypass_mode on the default branch; role lists cannot remove them.
-        create_tag_teams        = ["techchapter"]
-        dot_github_bypass_teams = ["techchapter"]
+        create_tag_teams        = ["pippiio"]
+        dot_github_bypass_teams = ["pippiio"]
         default_branch = {
-          rule_bypass_teams = ["techchapter"]
+          rule_bypass_teams = ["pippiio"]
           rule_bypass_mode  = "pull_request"
         }
       }

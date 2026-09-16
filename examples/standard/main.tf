@@ -3,7 +3,7 @@ module "github" {
 
   organization = {
     billing_email = "hello@pippi.io"
-    public_email  = "pippi@techchapter.com"
+    public_email  = "hello@pippi.io"
     name          = "pippiio"
     display_name  = "Pippi io"
     description   = "Battle tested Terraform modules"
@@ -14,8 +14,8 @@ module "github" {
   }
 
   teams = {
-    techchapter = {
-      description = "Maintainers of pippiio organization from TechChapter"
+    pippiio = {
+      description = "Maintainers of the pippiio organization"
       members     = {}
     }
   }
@@ -23,14 +23,14 @@ module "github" {
   repositories = {
     "github_organization" = {
       description     = "Terraform module for managing a GitHub organization"
-      team_permission = { techchapter = "read_write" }
+      team_permission = { pippiio = "read_write" }
       rules = {
         # Repository admins are always included for default-branch, tag-creation, and .github bypass.
         # Admins respect rule_bypass_mode on the default branch; role lists cannot remove them.
-        create_tag_teams        = ["techchapter"]
-        dot_github_bypass_teams = ["techchapter"]
+        create_tag_teams        = ["pippiio"]
+        dot_github_bypass_teams = ["pippiio"]
         default_branch = {
-          rule_bypass_teams = ["techchapter"]
+          rule_bypass_teams = ["pippiio"]
           rule_bypass_mode  = "pull_request"
         }
       }
