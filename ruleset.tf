@@ -89,7 +89,7 @@ resource "github_repository_ruleset" "protect_default_branch" {
     content {
       actor_id    = bypass_actors.key
       actor_type  = "Integration"
-      bypass_mode = "always"
+      bypass_mode = each.value.rules.default_branch.rule_bypass_mode
     }
   }
 
@@ -99,7 +99,7 @@ resource "github_repository_ruleset" "protect_default_branch" {
     content {
       actor_id    = github_team.this[bypass_actors.key].id
       actor_type  = "Team"
-      bypass_mode = "always"
+      bypass_mode = each.value.rules.default_branch.rule_bypass_mode
     }
   }
 
@@ -109,7 +109,7 @@ resource "github_repository_ruleset" "protect_default_branch" {
     content {
       actor_id    = local.repository_roles[lower(bypass_actors.key)]
       actor_type  = "RepositoryRole"
-      bypass_mode = "always"
+      bypass_mode = each.value.rules.default_branch.rule_bypass_mode
     }
   }
 }

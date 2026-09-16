@@ -24,6 +24,12 @@ module "github" {
     "github_organization" = {
       description     = "Terraform module for managing a GitHub organization"
       team_permission = { techchapter = "read_write" }
+      rules = {
+        default_branch = {
+          rule_bypass_teams = ["techchapter"]
+          rule_bypass_mode  = "pull_request"
+        }
+      }
     }
   }
 }

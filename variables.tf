@@ -78,6 +78,7 @@ variable "repositories" {
         required_status_checks    = optional(set(string), [])
         rule_bypass_teams         = optional(set(string), [])
         rule_bypass_roles         = optional(set(string), [])
+        rule_bypass_mode          = optional(string, "always")
       }), {})
       bypass_apps                  = optional(set(string), [])
       conventional_branch_names    = optional(bool, true)
@@ -129,8 +130,9 @@ variable "repositories" {
           required_approvals        : Required number of approvals to satisfy default branch protection requirements
           require_code_owner_review : Require an approved review in pull requests including files with a designated code owner
           required_status_checks    : The list of status checks to require in order to merge into main branch
-          rule_bypass_teams         : A set of team names that may bypass default branch rulesets on pull requests.
-          rule_bypass_roles         : A set of roles that may bypass default branch rulesets on pull requests.
+          rule_bypass_teams         : A set of team names that may bypass the default branch ruleset.
+          rule_bypass_roles         : A set of roles that may bypass the default branch ruleset.
+          rule_bypass_mode          : Bypass mode for apps, teams, and roles on the default branch. Set to "pull_request" to require a pull request when bypassing, or "always" (the default) to also allow direct pushes. Other rulesets are unaffected.
         bypass_apps                  : A set of GitHub app ids that may bypass rulesets
         conventional_branch_names    : Set to true to allow conventional commits branch naming
         allowed_branch_name_patterns : A set of string patterns defining allowed branch naming
@@ -142,6 +144,13 @@ variable "repositories" {
         dot_github_bypass_teams      : A set of team names that may push to .github folder.
         dot_github_bypass_roles      : A set of roles that may push to .github folder.
   EOL
+  validation {
+    condition = alltrue([
+      for repo in values(var.repositories) :
+      contains(["always", "pull_request"], repo.rules.default_branch.rule_bypass_mode)
+    ])
+    error_message = "rules.default_branch.rule_bypass_mode must be either \"always\" or \"pull_request\"."
+  }
 }
 
 variable "hosted_runner_groups" {
