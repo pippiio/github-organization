@@ -78,7 +78,6 @@ variable "repositories" {
         required_status_checks    = optional(set(string), [])
         rule_bypass_teams         = optional(set(string), [])
         rule_bypass_roles         = optional(set(string), [])
-        rule_bypass_users         = optional(set(string), [])
         rule_bypass_mode          = optional(string, "always")
       }), {})
       bypass_apps                  = optional(set(string), [])
@@ -89,10 +88,8 @@ variable "repositories" {
       allowed_tag_patterns         = optional(set(string), [])
       create_tag_teams             = optional(set(string), [])
       create_tag_roles             = optional(set(string), [])
-      create_tag_users             = optional(set(string), [])
       dot_github_bypass_teams      = optional(set(string), [])
       dot_github_bypass_roles      = optional(set(string), [])
-      dot_github_bypass_users      = optional(set(string), [])
     }), {})
   }))
   description = <<-EOL
@@ -135,8 +132,7 @@ variable "repositories" {
           required_status_checks    : The list of status checks to require in order to merge into main branch
           rule_bypass_teams         : A set of team names that may bypass the default branch ruleset.
           rule_bypass_roles         : Additional roles that may bypass the default branch ruleset using rule_bypass_mode. Repository admins are always included and also respect rule_bypass_mode, regardless of this list.
-          rule_bypass_users         : A set of GitHub usernames that may bypass the default branch ruleset. Users must already have repository write access or receive it through collaborator_permission or team_permission.
-          rule_bypass_mode          : Bypass mode for apps, teams, roles (including repository admins), and users on the default branch. Set to "pull_request" to require a pull request when bypassing, or "always" (the default) to also allow direct pushes. Other rulesets are unaffected.
+          rule_bypass_mode          : Bypass mode for apps, teams, and roles (including repository admins) on the default branch. Set to "pull_request" to require a pull request when bypassing, or "always" (the default) to also allow direct pushes. Other rulesets are unaffected.
         bypass_apps                  : A set of GitHub app ids that may bypass rulesets
         conventional_branch_names    : Set to true to allow conventional commits branch naming
         allowed_branch_name_patterns : A set of string patterns defining allowed branch naming
@@ -145,10 +141,8 @@ variable "repositories" {
         allowed_tag_patterns         : A set of string patterns defining allowed tag naming
         create_tag_teams             : A set of team names that may create tags.
         create_tag_roles             : Additional roles that may create tags. Repository admins always have bypass for tag creation, regardless of this list.
-        create_tag_users             : A set of GitHub usernames that may create tags. Users must already have repository write access or receive it through collaborator_permission or team_permission. Tag naming and immutability rules still apply.
         dot_github_bypass_teams      : A set of team names that may push to .github folder.
         dot_github_bypass_roles      : Additional roles that may push to .github folder. Repository admins always have bypass for this protection, regardless of this list.
-        dot_github_bypass_users      : A set of GitHub usernames that may push to .github folder. Users must already have repository write access or receive it through collaborator_permission or team_permission. Uses always bypass because this is a push ruleset.
   EOL
   validation {
     condition = alltrue([

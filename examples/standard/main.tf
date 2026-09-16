@@ -22,17 +22,15 @@ module "github" {
 
   repositories = {
     "github_organization" = {
-      description             = "Terraform module for managing a GitHub organization"
-      team_permission         = { techchapter = "read_write" }
-      collaborator_permission = { octocat = true } # Replace with a GitHub username.
+      description     = "Terraform module for managing a GitHub organization"
+      team_permission = { techchapter = "read_write" }
       rules = {
         # Repository admins are always included for default-branch, tag-creation, and .github bypass.
         # Admins respect rule_bypass_mode on the default branch; role lists cannot remove them.
-        create_tag_users        = ["octocat"]
-        dot_github_bypass_users = ["octocat"]
+        create_tag_teams        = ["techchapter"]
+        dot_github_bypass_teams = ["techchapter"]
         default_branch = {
           rule_bypass_teams = ["techchapter"]
-          rule_bypass_users = ["octocat"]
           rule_bypass_mode  = "pull_request"
         }
       }
