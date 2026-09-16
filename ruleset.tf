@@ -38,6 +38,18 @@ locals {
   }
 }
 
+data "github_user" "ruleset_bypass" {
+  for_each = toset(flatten([
+    for repo in values(var.repositories) : tolist(setunion(
+      repo.rules.default_branch.rule_bypass_users,
+      repo.rules.create_tag_users,
+      repo.rules.dot_github_bypass_users,
+    ))
+  ]))
+
+  username = each.key
+}
+
 resource "github_repository_ruleset" "protect_default_branch" {
   for_each = var.repositories
 
@@ -103,12 +115,28 @@ resource "github_repository_ruleset" "protect_default_branch" {
     }
   }
 
+  bypass_actors {
+    actor_id    = local.repository_roles.repositoryadmin
+    actor_type  = "RepositoryRole"
+    bypass_mode = each.value.rules.default_branch.rule_bypass_mode
+  }
+
   dynamic "bypass_actors" {
-    for_each = each.value.rules.default_branch.rule_bypass_roles
+    for_each = toset([for role in each.value.rules.default_branch.rule_bypass_roles : lower(role) if lower(role) != "repositoryadmin"])
 
     content {
       actor_id    = local.repository_roles[lower(bypass_actors.key)]
       actor_type  = "RepositoryRole"
+      bypass_mode = each.value.rules.default_branch.rule_bypass_mode
+    }
+  }
+
+  dynamic "bypass_actors" {
+    for_each = each.value.rules.default_branch.rule_bypass_users
+
+    content {
+      actor_id    = tonumber(data.github_user.ruleset_bypass[bypass_actors.key].id)
+      actor_type  = "User"
       bypass_mode = each.value.rules.default_branch.rule_bypass_mode
     }
   }
@@ -260,12 +288,28 @@ resource "github_repository_ruleset" "tag_actors" {
     }
   }
 
+  bypass_actors {
+    actor_id    = local.repository_roles.repositoryadmin
+    actor_type  = "RepositoryRole"
+    bypass_mode = "always"
+  }
+
   dynamic "bypass_actors" {
-    for_each = each.value.rules.create_tag_roles
+    for_each = toset([for role in each.value.rules.create_tag_roles : lower(role) if lower(role) != "repositoryadmin"])
 
     content {
       actor_id    = local.repository_roles[lower(bypass_actors.key)]
       actor_type  = "RepositoryRole"
+      bypass_mode = "always"
+    }
+  }
+
+  dynamic "bypass_actors" {
+    for_each = each.value.rules.create_tag_users
+
+    content {
+      actor_id    = tonumber(data.github_user.ruleset_bypass[bypass_actors.key].id)
+      actor_type  = "User"
       bypass_mode = "always"
     }
   }
@@ -305,12 +349,28 @@ resource "github_repository_ruleset" "protect_dot_github" {
     }
   }
 
+  bypass_actors {
+    actor_id    = local.repository_roles.repositoryadmin
+    actor_type  = "RepositoryRole"
+    bypass_mode = "always"
+  }
+
   dynamic "bypass_actors" {
-    for_each = each.value.rules.dot_github_bypass_roles
+    for_each = toset([for role in each.value.rules.dot_github_bypass_roles : lower(role) if lower(role) != "repositoryadmin"])
 
     content {
       actor_id    = local.repository_roles[lower(bypass_actors.key)]
       actor_type  = "RepositoryRole"
+      bypass_mode = "always"
+    }
+  }
+
+  dynamic "bypass_actors" {
+    for_each = each.value.rules.dot_github_bypass_users
+
+    content {
+      actor_id    = tonumber(data.github_user.ruleset_bypass[bypass_actors.key].id)
+      actor_type  = "User"
       bypass_mode = "always"
     }
   }
