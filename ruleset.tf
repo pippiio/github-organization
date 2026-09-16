@@ -103,14 +103,8 @@ resource "github_repository_ruleset" "protect_default_branch" {
     }
   }
 
-  bypass_actors {
-    actor_id    = local.repository_roles.repositoryadmin
-    actor_type  = "RepositoryRole"
-    bypass_mode = each.value.rules.default_branch.rule_bypass_mode
-  }
-
   dynamic "bypass_actors" {
-    for_each = toset([for role in each.value.rules.default_branch.rule_bypass_roles : lower(role) if lower(role) != "repositoryadmin"])
+    for_each = toset([for role in each.value.rules.default_branch.rule_bypass_roles : lower(role)])
 
     content {
       actor_id    = local.repository_roles[lower(bypass_actors.key)]
@@ -266,14 +260,8 @@ resource "github_repository_ruleset" "tag_actors" {
     }
   }
 
-  bypass_actors {
-    actor_id    = local.repository_roles.repositoryadmin
-    actor_type  = "RepositoryRole"
-    bypass_mode = "always"
-  }
-
   dynamic "bypass_actors" {
-    for_each = toset([for role in each.value.rules.create_tag_roles : lower(role) if lower(role) != "repositoryadmin"])
+    for_each = toset([for role in each.value.rules.create_tag_roles : lower(role)])
 
     content {
       actor_id    = local.repository_roles[lower(bypass_actors.key)]
@@ -317,14 +305,8 @@ resource "github_repository_ruleset" "protect_dot_github" {
     }
   }
 
-  bypass_actors {
-    actor_id    = local.repository_roles.repositoryadmin
-    actor_type  = "RepositoryRole"
-    bypass_mode = "always"
-  }
-
   dynamic "bypass_actors" {
-    for_each = toset([for role in each.value.rules.dot_github_bypass_roles : lower(role) if lower(role) != "repositoryadmin"])
+    for_each = toset([for role in each.value.rules.dot_github_bypass_roles : lower(role)])
 
     content {
       actor_id    = local.repository_roles[lower(bypass_actors.key)]
